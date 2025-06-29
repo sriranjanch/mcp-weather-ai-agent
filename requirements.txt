@@ -1,0 +1,7 @@
+sqlite3
+httpx
+mcp
+httpx
+uvicorn
+fastapi
+pydantic
