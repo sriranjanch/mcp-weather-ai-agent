@@ -1,6 +1,7 @@
 from typing import Any
 import httpx
 from mcp.server.fastmcp import FastMCP
+import sqlite3
 
 # Initialize FastMCP server
 mcp = FastMCP("weather")
@@ -59,3 +60,30 @@ async def get_alerts(state: str) -> str:
 def echo_resource(message: str) -> str:
     """Echo a message as a resource"""
     return f"Resource echo: {message}"
+
+@mcp.tool()
+def add_data(query: str) -> bool:
+    """Execute an INSERT query to add a record."""
+    try:
+        conn = sqlite3.connect("demo.db")
+        conn.execute(query)
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        return False
+
+
+@mcp.tool()
+def read_data(query: str = "SELECT * FROM people") -> list:
+    """Execute a SELECT query and return all records."""
+    try:
+        conn = sqlite3.connect("demo.db")
+        results = conn.execute(query).fetchall()
+        conn.close()
+        return results
+    except Exception as e:
+        return []
+    
+if __name__ == "__main__":
+    print("Starting weather server...")
